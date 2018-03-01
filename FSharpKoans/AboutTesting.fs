@@ -34,6 +34,7 @@ module ``01: About Testing`` =
 
         The following example shows you how NOT to do it:
     *)
+    // Hope this works
 
     //[<Test>]
     //let ``My whitespace is messed up!`` () = (1 + 1) |> should equal __
