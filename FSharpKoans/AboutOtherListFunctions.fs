@@ -20,7 +20,15 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``01 exists: finding whether any matching item exists`` () =
         let exists (f : 'a -> bool) (xs : 'a list) : bool =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee370309.aspx
+            let rec exists1 f xs =
+                match xs with
+                |[] -> false
+                |a::rest ->
+                    match f a with 
+                    |true -> true
+                    |false -> exists1 f rest
+            exists1 f xs
+            // Does this: https://msdn.microsoft.com/en-us/library/ee370309.aspx
         exists ((=) 4) [7;6;5;4;5] |> should equal true
         exists (fun x -> String.length x < 4) ["true"; "false"] |> should equal false
         exists (fun _ -> true) [] |> should equal false
@@ -29,7 +37,14 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``02 partition: splitting a list based on a criterion`` () =
         let partition (f : 'a -> bool) (xs : 'a list) : ('a list) * ('a list) =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee353782.aspx
+            let rec partition1 f xs list1 list2 =
+                match xs with
+                |[] -> (list1, list2)
+                |a::rest ->
+                    match f a with 
+                    |true -> partition1 f rest (list1@[a]) list2
+                    |false -> partition1 f rest list1 (list2@[a])
+            partition1 f xs [] [] // Does this: https://msdn.microsoft.com/en-us/library/ee353782.aspx
         let a, b = partition (fun x -> x%2=0) [1;2;3;4;5;6;7;8;9;10]
         a |> should equal [2;4;6;8;10]
         b |> should equal [1;3;5;7;9]
@@ -44,7 +59,13 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``03 init: creating a list based on a size and a function`` () =
         let init (n : int) (f : int -> 'a) : 'a list =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee370497.aspx
+            match seq {0..(n-1)} |> Seq.toList with
+            |max ->
+                let rec init max f newList =
+                    match max with 
+                    |[] -> newList
+                    |a::rest -> init rest f (newList@[f a])
+                init max f []// Does this: https://msdn.microsoft.com/en-us/library/ee370497.aspx
         init 10 (fun x -> x*2) |> should equal [0;2;4;6;8;10;12;14;16;18]
         init 4 (sprintf "(%d)") |> should equal ["(0)";"(1)";"(2)";"(3)"]
 
@@ -52,7 +73,14 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``04 tryFind: find the first matching element, if any`` () =
         let tryFind (p : 'a -> bool) (xs : 'a list) : 'a option =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee353506.aspx
+            let rec try1 p xs =
+                match xs with
+                |[] -> None
+                |a::rest ->
+                    match p a with
+                    |true -> (Some a)
+                    |false -> try1 p rest
+            try1 p xs // Does this: https://msdn.microsoft.com/en-us/library/ee353506.aspx
         tryFind (fun x -> x<=45) [100;85;25;55;6] |> should equal (Some 25)
         tryFind (fun x -> x>450) [100;85;25;55;6] |> should equal None
 
@@ -60,7 +88,14 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``05 tryPick: find the first matching element, if any, and transform it`` () =
         let tryPick (p : 'a -> 'b option) (xs : 'a list) : 'b option =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee353814.aspx
+            let rec pick p xs =
+                match xs with
+                |[] -> None
+                |a::rest ->
+                    match p a with
+                    |Some x -> (Some x)
+                    |None -> pick p rest
+            pick p xs // Does this: https://msdn.microsoft.com/en-us/library/ee353814.aspx
         let f x =
             match x<=45 with
             | true -> Some(x*2)
@@ -90,7 +125,14 @@ module ``19: Other list functions`` =
         // - why can't it take an 'a->'b, instead of an 'a->'b option ?
         // - why does it return a 'b list, and not a 'b list option ?
         let choose (p : 'a -> 'b option) (xs : 'a list) : 'b list =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee353456.aspx
+            let rec try1 p xs list1 =
+                match xs with 
+                |[] -> List.rev list1
+                |a::rest ->
+                    match p a with
+                    |Some a -> try1 p (rest) (a::list1)
+                    |None -> try1 p rest list1
+            try1 p xs []// Does this: https://msdn.microsoft.com/en-us/library/ee353456.aspx
         let f x =
             match x<=45 with
             | true -> Some(x*2)
@@ -108,7 +150,12 @@ module ``19: Other list functions`` =
     [<Test>]
     let ``07 mapi: like map, but passes along an item index as well`` () =
         let mapi (f : int -> 'a -> 'b) (xs : 'a list) : 'b list =
-            __ // Does this: https://msdn.microsoft.com/en-us/library/ee353425.aspx
+            let rec mapi1 f idx xs newList =
+                match xs with 
+                |[] -> List.rev newList
+                |a::rest -> mapi1 f (idx+1) rest ((f idx a)::newList)
+            mapi1 f 0 xs []
+                // Does this: https://msdn.microsoft.com/en-us/library/ee353425.aspx
         mapi (fun i x -> -i, x+1) [9;8;7;6] |> should equal [0,10; -1,9; -2,8; -3,7]
         let hailstone i t =
             match i%2 with
