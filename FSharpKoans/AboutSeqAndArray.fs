@@ -120,7 +120,13 @@ module ``21: Sequences and Arrays`` =
                     yield! hailstone result // I'm giving back values taken from a sequence here
             }
         let rec puffery x =
-            __ // you've seen the 'puffery' function in the previous test, yes?
+            seq {
+                yield x
+                match String.length x with
+                |1 -> ()
+                |_ -> yield! puffery x.[..(String.length x - 2)]
+                }
+             // you've seen the 'puffery' function in the previous test, yes?
             // Implement that here, using a sequence expression.
         puffery "Whizz!" |> Seq.toList |> should equal ["Whizz!"; "Whizz"; "Whiz"; "Whi"; "Wh"; "W"]
         puffery "ZchelnIk" |> Seq.toList |> should equal ["ZchelnIk"; "ZchelnI"; "Zcheln"; "Zchel"; "Zche"; "Zch"; "Zc"; "Z"]
