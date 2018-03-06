@@ -10,7 +10,7 @@ open NUnit.Framework
 *)
 
 module ``04: Tuples`` = 
-    open System.Threading.Tasks
+   // open System.Threading.Tasks
 
     [<Test>]
     let ``01 Creating tuples`` () = 

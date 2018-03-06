@@ -69,12 +69,12 @@ module ``07: Strings and Conversions`` =
 
     [<Test>]
     let ``09 String formatting: %s format specifier`` () =
-        let result = sprintf  "%s %s"  "Practice makes" "perfect."
+        let result = sprintf  "Practice makes %s" "perfect."
         result |> should equal "Practice makes perfect."
 
     [<Test>]
     let ``10 String formatting: %d format specifier`` () =
-        let result = sprintf "%d %s" 9 "planets, Sir, endlessly circle, Sir"
+        let result = sprintf "%d planets, Sir, endlessly circle, Sir" 9 
         result |> should equal "9 planets, Sir, endlessly circle, Sir"
 
     [<Test>]
@@ -128,7 +128,7 @@ module ``07: Strings and Conversions`` =
         let ``first index of 'P'`` = s.IndexOf('P')
         let ``last index of 'P'`` = s.LastIndexOf('P')
         let ``lowercase version`` = s.ToLower()
-        let ``without surrounding space`` = s.Substring(2,34)
+        let ``without surrounding space`` = s.Trim()
         ``first index of 'P'`` |> should equal 5
         ``last index of 'P'`` |> should equal 11
         ``lowercase version`` |> should equal "  dr phil, phd, md, mc, medicine man  "

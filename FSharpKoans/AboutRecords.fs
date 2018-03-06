@@ -23,7 +23,7 @@ type Book =
 
 // and now, the tests:
 module ``06: On the Record`` =
-    open System.Reflection
+   // open System.Reflection
 
     [<Test>]
     let ``01 Creating records`` () =
@@ -51,7 +51,7 @@ module ``06: On the Record`` =
     let ``03 Decomposing with a record pattern`` () =
         let book = { Title="Dune"; Author="Frank Herbert"; Year=1965 }
         let i = book
-        let { Title=k; Author=_; Year=m } = i
+        let { Title=k; Year=m } = i
         k|> should equal "Dune" // DO NOT use a . symbol in your answer
         m|> should equal 1965// DO NOT use a . symbol in your answer
        

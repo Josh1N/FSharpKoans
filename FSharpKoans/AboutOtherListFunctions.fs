@@ -78,7 +78,7 @@ module ``19: Other list functions`` =
                 |[] -> None
                 |a::rest ->
                     match p a with
-                    |true -> (Some a)
+                    |true -> Some a
                     |false -> try1 p rest
             try1 p xs // Does this: https://msdn.microsoft.com/en-us/library/ee353506.aspx
         tryFind (fun x -> x<=45) [100;85;25;55;6] |> should equal (Some 25)
@@ -93,7 +93,7 @@ module ``19: Other list functions`` =
                 |[] -> None
                 |a::rest ->
                     match p a with
-                    |Some x -> (Some x)
+                    |Some x -> Some x
                     |None -> pick p rest
             pick p xs // Does this: https://msdn.microsoft.com/en-us/library/ee353814.aspx
         let f x =
